@@ -2,8 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { requireAdmin } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 import type { FormState } from "@/lib/form-state";
 import { isLocalPreview } from "@/lib/local-preview";
 
@@ -35,7 +36,8 @@ export async function subscribe(_previous: FormState, formData: FormData): Promi
     };
   }
 
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
   const { error } = await supabase.from("subscribers").insert({
     name,
     email,
@@ -75,7 +77,8 @@ export async function submitContact(_previous: FormState, formData: FormData): P
     };
   }
 
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
   const { error } = await supabase.from("contact_messages").insert({ name, email, message });
   if (error) throw new Error(`Could not save your message: ${error.message}`);
 
@@ -107,7 +110,8 @@ export async function submitPrayerRequest(
     };
   }
 
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
   const { error } = await supabase.from("prayer_requests").insert({
     name: name || null,
     email: email || null,
@@ -131,7 +135,8 @@ export async function signIn(_previous: FormState, formData: FormData): Promise<
   const password = String(formData.get("password") ?? "");
   if (!email || !password) return { success: false, message: "Enter your email and password." };
 
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error)
     return { success: false, message: "Sign-in failed. Check your credentials and try again." };
@@ -149,7 +154,8 @@ export async function signIn(_previous: FormState, formData: FormData): Promise<
 export async function signOut() {
   if (isLocalPreview()) redirect("/admin/login");
 
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
   const { error } = await supabase.auth.signOut();
   if (error) throw new Error(`Could not sign out: ${error.message}`);
   redirect("/admin/login");

@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import SiteHeader from "@/components/site-header";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 import { isLocalPreview } from "@/lib/local-preview";
 import { previewDevotionals } from "@/lib/local-preview-data";
 
@@ -14,7 +15,8 @@ export default async function DevotionalPage({ params }: { params: Promise<{ id:
   if (isLocalPreview()) {
     devotion = previewDevotionals.find((item) => item.id === id);
   } else {
-    const supabase = await createClient();
+    const cookieStore = await cookies();
+    const supabase = createClient(cookieStore);
     const { data, error } = await supabase
       .from("devotionals")
       .select("*")

@@ -5,7 +5,7 @@ Next.js app intended for deployment on Vercel. Supabase provides admin authentic
 ## Local setup
 
 1. Install dependencies with `npm install`.
-2. Create a Supabase project and copy `.env.example` to `.env.local`. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` from the Supabase project settings.
+2. Create a Supabase project and copy `.env.example` to `.env.local`. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from the Supabase project settings.
 3. Apply both SQL files in `supabase/migrations/` in filename order in the Supabase SQL Editor.
 4. Create the admin account in Supabase Authentication, then authorize it by running this in the SQL Editor, replacing the email:
 
