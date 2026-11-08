@@ -1,0 +1,11 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/contact/page": "/contact",
+  "/prayer-request/page": "/prayer-request",
+  "/about/page": "/about",
+  "/admin/login/page": "/admin/login",
+  "/devotionals/page": "/devotionals",
+  "/devotionals/[id]/page": "/devotionals/[id]",
+  "/page": "/",
+  "/admin/page": "/admin"
+}

@@ -1,0 +1,62 @@
+import type { Devotional, Subscriber } from "@/lib/database.types";
+
+export const previewSubscribers: Subscriber[] = [
+  {
+    id: "preview-1",
+    name: "Mary Johnson",
+    email: "mary@example.com",
+    phone: "+1 555-0101",
+    sms_opt_in: true,
+    status: "active",
+    created_at: "2026-10-28T12:00:00.000Z",
+  },
+  {
+    id: "preview-2",
+    name: "Daniel Brooks",
+    email: "daniel@example.com",
+    phone: null,
+    sms_opt_in: false,
+    status: "active",
+    created_at: "2026-10-24T12:00:00.000Z",
+  },
+  {
+    id: "preview-3",
+    name: "Ruth Williams",
+    email: "ruth@example.com",
+    phone: "+1 555-0103",
+    sms_opt_in: false,
+    status: "active",
+    created_at: "2026-10-20T12:00:00.000Z",
+  },
+];
+
+export const previewDevotionals: Devotional[] = [
+  {
+    id: "preview-devotion-1",
+    title: "Grace for the In-Between",
+    scripture_reference: "Isaiah 40:31",
+    topic: "Faith",
+    excerpt:
+      "Waiting is not wasted time in the hands of God. It is where our roots grow deeper and our trust becomes steady.",
+    body:
+      "There are seasons when life feels suspended between what God has promised and what we can presently see. We pray, we watch, and we wonder when the answer will come.\n\nBut waiting is not wasted time in the hands of God. Beneath the quiet surface, roots are growing. Our hurried hearts learn a steadier rhythm. We discover that His presence is not merely the bridge to the blessing—it is the blessing itself.\n\nWhatever in-between place you are standing in today, you are not standing there alone. Grace is already at work.",
+    prayer:
+      "Father, quiet my hurried heart. Help me trust that You are at work even when I cannot see the outcome. Amen.",
+    status: "published",
+    created_at: "2026-11-08T12:00:00.000Z",
+    published_at: "2026-11-08T12:00:00.000Z",
+  },
+  {
+    id: "preview-devotion-2",
+    title: "The Quiet Work of Hope",
+    scripture_reference: "Romans 5:3–5",
+    topic: "Hope",
+    excerpt: "Hope often begins quietly, beneath the surface, while God is shaping what we cannot yet see.",
+    body:
+      "Hope does not always arrive with a loud announcement. Sometimes it begins as a small, steady assurance that God is still at work.\n\nWhen we bring our whole selves to Him, even difficult seasons can shape endurance, character, and a hope that is not put to shame.",
+    prayer: null,
+    status: "published",
+    created_at: "2026-11-07T12:00:00.000Z",
+    published_at: "2026-11-07T12:00:00.000Z",
+  },
+];
