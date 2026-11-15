@@ -37,14 +37,69 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["devotionals"]["Insert"]>;
         Relationships: [];
       };
+      devotional_email_deliveries: {
+        Row: {
+          id: string;
+          devotional_id: string;
+          subscriber_id: string | null;
+          recipient_email: string;
+          status: "queued" | "sending" | "sent" | "delivered" | "failed";
+          attempt_count: number;
+          provider_message_id: string | null;
+          error_message: string | null;
+          sent_at: string | null;
+          delivered_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          devotional_id: string;
+          subscriber_id?: string | null;
+          recipient_email: string;
+          status?: "queued" | "sending" | "sent" | "delivered" | "failed";
+          attempt_count?: number;
+          provider_message_id?: string | null;
+          error_message?: string | null;
+          sent_at?: string | null;
+          delivered_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["devotional_email_deliveries"]["Insert"]>;
+        Relationships: [];
+      };
+      devotional_email_events: {
+        Row: {
+          provider_event_id: string;
+          delivery_id: string;
+          event_type: "delivered" | "failed" | "opened" | "clicked";
+          clicked_url: string | null;
+          occurred_at: string;
+        };
+        Insert: {
+          provider_event_id: string;
+          delivery_id: string;
+          event_type: "delivered" | "failed" | "opened" | "clicked";
+          clicked_url?: string | null;
+          occurred_at: string;
+        };
+        Update: never;
+        Relationships: [];
+      };
       subscribers: {
         Row: {
           id: string;
           name: string;
           email: string;
           phone: string | null;
+          email_opt_in: boolean;
+          email_status: "pending" | "confirmed" | "unsubscribed";
+          email_confirmed_at: string | null;
+          email_confirmation_token_hash: string | null;
+          email_confirmation_expires_at: string | null;
+          email_confirmation_error: string | null;
           sms_opt_in: boolean;
-          status: "active" | "unsubscribed";
           created_at: string;
         };
         Insert: {
@@ -52,8 +107,13 @@ export interface Database {
           name: string;
           email: string;
           phone?: string | null;
+          email_opt_in?: boolean;
+          email_status?: "pending" | "confirmed" | "unsubscribed";
+          email_confirmed_at?: string | null;
+          email_confirmation_token_hash?: string | null;
+          email_confirmation_expires_at?: string | null;
+          email_confirmation_error?: string | null;
           sms_opt_in?: boolean;
-          status?: "active" | "unsubscribed";
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["subscribers"]["Insert"]>;
@@ -107,3 +167,6 @@ export interface Database {
 
 export type Devotional = Database["public"]["Tables"]["devotionals"]["Row"];
 export type Subscriber = Database["public"]["Tables"]["subscribers"]["Row"];
+export type DevotionalEmailDelivery =
+  Database["public"]["Tables"]["devotional_email_deliveries"]["Row"];
+export type DevotionalEmailEvent = Database["public"]["Tables"]["devotional_email_events"]["Row"];

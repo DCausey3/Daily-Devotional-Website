@@ -1,83 +1,45 @@
 {
   "pages": {
-    "/_not-found/page": [
-      "static/chunks/webpack-5f15ffddb826c25b.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-73938ce8a8eac1ad.js",
-      "static/chunks/main-app-2104423b21876aec.js",
-      "static/chunks/app/_not-found/page-73030572e69c4f78.js"
-    ],
     "/layout": [
-      "static/chunks/webpack-5f15ffddb826c25b.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-73938ce8a8eac1ad.js",
-      "static/chunks/main-app-2104423b21876aec.js",
-      "static/css/a15566cae87c61d5.css",
-      "static/chunks/app/layout-b1f071a0051def1a.js"
-    ],
-    "/about/page": [
-      "static/chunks/webpack-5f15ffddb826c25b.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-73938ce8a8eac1ad.js",
-      "static/chunks/main-app-2104423b21876aec.js",
-      "static/chunks/112-be0383adc33815fc.js",
-      "static/chunks/app/about/page-f3a8309d2cf2e43b.js"
-    ],
-    "/admin/login/page": [
-      "static/chunks/webpack-5f15ffddb826c25b.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-73938ce8a8eac1ad.js",
-      "static/chunks/main-app-2104423b21876aec.js",
-      "static/chunks/112-be0383adc33815fc.js",
-      "static/chunks/app/admin/login/page-20e2c4559a89b2c9.js"
-    ],
-    "/contact/page": [
-      "static/chunks/webpack-5f15ffddb826c25b.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-73938ce8a8eac1ad.js",
-      "static/chunks/main-app-2104423b21876aec.js",
-      "static/chunks/112-be0383adc33815fc.js",
-      "static/chunks/app/contact/page-6d35fdc0f617f5e1.js"
-    ],
-    "/prayer-request/page": [
-      "static/chunks/webpack-5f15ffddb826c25b.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-73938ce8a8eac1ad.js",
-      "static/chunks/main-app-2104423b21876aec.js",
-      "static/chunks/112-be0383adc33815fc.js",
-      "static/chunks/app/prayer-request/page-6d35fdc0f617f5e1.js"
-    ],
-    "/devotionals/page": [
-      "static/chunks/webpack-5f15ffddb826c25b.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-73938ce8a8eac1ad.js",
-      "static/chunks/main-app-2104423b21876aec.js",
-      "static/chunks/112-be0383adc33815fc.js",
-      "static/chunks/app/devotionals/page-dc3b53959dcd23df.js"
-    ],
-    "/devotionals/[id]/page": [
-      "static/chunks/webpack-5f15ffddb826c25b.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-73938ce8a8eac1ad.js",
-      "static/chunks/main-app-2104423b21876aec.js",
-      "static/chunks/112-be0383adc33815fc.js",
-      "static/chunks/app/devotionals/[id]/page-f3a8309d2cf2e43b.js"
-    ],
-    "/admin/page": [
-      "static/chunks/webpack-5f15ffddb826c25b.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-73938ce8a8eac1ad.js",
-      "static/chunks/main-app-2104423b21876aec.js",
-      "static/chunks/112-be0383adc33815fc.js",
-      "static/chunks/app/admin/page-f0b10ed2bb84f425.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
     ],
     "/page": [
-      "static/chunks/webpack-5f15ffddb826c25b.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-73938ce8a8eac1ad.js",
-      "static/chunks/main-app-2104423b21876aec.js",
-      "static/chunks/112-be0383adc33815fc.js",
-      "static/chunks/app/page-69368e2bd5faee21.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/page.js"
+    ],
+    "/devotionals/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/devotionals/page.js"
+    ],
+    "/about/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/about/page.js"
+    ],
+    "/prayer-request/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/prayer-request/page.js"
+    ],
+    "/contact/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/contact/page.js"
+    ],
+    "/admin/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/page.js"
+    ],
+    "/admin/login/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/login/page.js"
     ]
   }
 }
