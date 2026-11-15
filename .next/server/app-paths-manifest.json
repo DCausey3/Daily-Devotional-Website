@@ -1,9 +1,9 @@
 {
   "/page": "app/page.js",
-  "/devotionals/page": "app/devotionals/page.js",
-  "/about/page": "app/about/page.js",
-  "/prayer-request/page": "app/prayer-request/page.js",
   "/contact/page": "app/contact/page.js",
   "/admin/page": "app/admin/page.js",
-  "/admin/login/page": "app/admin/login/page.js"
+  "/admin/login/page": "app/admin/login/page.js",
+  "/devotionals/page": "app/devotionals/page.js",
+  "/about/page": "app/about/page.js",
+  "/prayer-request/page": "app/prayer-request/page.js"
 }

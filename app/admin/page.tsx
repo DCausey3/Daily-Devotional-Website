@@ -122,7 +122,6 @@ export default async function AdminPage() {
   const unsubscribedEmails = subscribers.filter(
     (subscriber) => subscriber.email_status === "unsubscribed",
   ).length;
-  const smsOptIns = subscribers.filter((subscriber) => subscriber.sms_opt_in).length;
   const deliveredEmails = emailDeliveries.filter(
     (delivery) => delivery.status === "delivered",
   ).length;
@@ -165,7 +164,7 @@ export default async function AdminPage() {
             view real subscribers.
           </p>
         )}
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <section className="admin-card">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-[#738078]">Confirmed email</span>
@@ -183,14 +182,6 @@ export default async function AdminPage() {
             </div>
             <p className="mt-4 font-serif text-4xl text-[#173b35]">{publishedCount ?? 0}</p>
             <p className="mt-1 text-xs text-[#8c958f]">Most recent ten shown below</p>
-          </section>
-          <section className="admin-card">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-[#738078]">SMS consent</span>
-              <Users size={20} className="text-[#426158]" />
-            </div>
-            <p className="mt-4 font-serif text-4xl text-[#173b35]">{smsOptIns}</p>
-            <p className="mt-1 text-xs text-[#8c958f]">Text delivery is not configured</p>
           </section>
           <section className="admin-card">
             <div className="flex items-center justify-between">

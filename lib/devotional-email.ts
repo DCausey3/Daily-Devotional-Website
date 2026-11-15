@@ -20,7 +20,11 @@ export function escapeHtml(text: string) {
   });
 }
 
-export function buildDevotionalEmail(devotional: DevotionalEmailContent) {
+export function buildDevotionalEmail(
+  devotional: DevotionalEmailContent,
+  preferencesUrl?: string,
+  mailingAddress?: string,
+) {
   const paragraphs = devotional.body
     .split(/\n\s*\n/)
     .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, "<br />")}</p>`)
@@ -33,6 +37,9 @@ export function buildDevotionalEmail(devotional: DevotionalEmailContent) {
     devotional.prayer
       ? `<h2>Closing prayer</h2><p>${escapeHtml(devotional.prayer).replace(/\n/g, "<br />")}</p>`
       : "",
+    preferencesUrl
+      ? `<hr /><p>You received this email because you confirmed devotional email updates from Pastor K’s Daily Devotional. <a href="${escapeHtml(preferencesUrl)}">Unsubscribe or manage your preferences</a>.</p><p>Pastor K’s Daily Devotional<br />${escapeHtml(mailingAddress ?? "")}</p>`
+      : "",
   ].join("");
   const text = [
     devotional.title,
@@ -40,6 +47,9 @@ export function buildDevotionalEmail(devotional: DevotionalEmailContent) {
     devotional.excerpt,
     devotional.body,
     devotional.prayer ? `Closing prayer\n${devotional.prayer}` : "",
+    preferencesUrl
+      ? `You received this email because you confirmed devotional email updates from Pastor K’s Daily Devotional.\nUnsubscribe or manage your preferences: ${preferencesUrl}\n\nPastor K’s Daily Devotional\n${mailingAddress ?? ""}`
+      : "",
   ]
     .filter(Boolean)
     .join("\n\n");

@@ -126,7 +126,18 @@ export default async function HomePage() {
         </section>
       </main>
       <footer className="bg-[#112f2b] px-5 py-10 text-center text-sm text-white/70">
-        Daily encouragement to help you walk faithfully.
+        <p>Daily encouragement to help you walk faithfully.</p>
+        <nav className="mt-4 flex justify-center gap-5">
+          <Link href="/terms" className="underline underline-offset-4">
+            Email terms
+          </Link>
+          <Link href="/privacy" className="underline underline-offset-4">
+            Email privacy
+          </Link>
+          <Link href="/contact" className="underline underline-offset-4">
+            Contact
+          </Link>
+        </nav>
       </footer>
     </>
   );

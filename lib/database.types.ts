@@ -99,6 +99,8 @@ export interface Database {
           email_confirmation_token_hash: string | null;
           email_confirmation_expires_at: string | null;
           email_confirmation_error: string | null;
+          email_opt_in_at: string | null;
+          email_unsubscribed_at: string | null;
           sms_opt_in: boolean;
           created_at: string;
         };
@@ -113,10 +115,18 @@ export interface Database {
           email_confirmation_token_hash?: string | null;
           email_confirmation_expires_at?: string | null;
           email_confirmation_error?: string | null;
+          email_opt_in_at?: string | null;
+          email_unsubscribed_at?: string | null;
           sms_opt_in?: boolean;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["subscribers"]["Insert"]>;
+        Relationships: [];
+      };
+      subscriber_preference_tokens: {
+        Row: { token_hash: string; subscriber_id: string; created_at: string };
+        Insert: { token_hash: string; subscriber_id: string; created_at?: string };
+        Update: never;
         Relationships: [];
       };
       contact_messages: {

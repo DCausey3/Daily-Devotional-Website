@@ -50,28 +50,6 @@ function SubscriberRow({ subscriber, readOnly }: { subscriber: Subscriber; readO
         />
         <span className="ml-2 text-xs">Email</span>
       </td>
-      <td>
-        <input
-          name="phone"
-          form={`subscriber-${subscriber.id}`}
-          defaultValue={subscriber.phone ?? ""}
-          maxLength={32}
-          type="tel"
-          className="field min-w-36"
-          disabled={readOnly}
-        />
-        <label className="mt-2 flex items-center gap-2 text-xs">
-          <input
-            name="sms_opt_in"
-            form={`subscriber-${subscriber.id}`}
-            type="checkbox"
-            defaultChecked={subscriber.sms_opt_in}
-            className="accent-[#173b35]"
-            disabled={readOnly}
-          />
-          Text consent
-        </label>
-      </td>
       <td>{new Date(subscriber.created_at).toLocaleDateString()}</td>
       <td>
         <form id={`subscriber-${subscriber.id}`} action={action} className="space-y-2">
@@ -99,23 +77,14 @@ export default function SubscriberManager({
 }) {
   const [search, setSearch] = useState("");
   const [emailFilter, setEmailFilter] = useState("all");
-  const [smsOnly, setSmsOnly] = useState(false);
   const filteredSubscribers = useMemo(() => {
     const term = search.trim().toLowerCase();
     return subscribers.filter((subscriber) => {
       const matchesTerm =
-        !term ||
-        [subscriber.name, subscriber.email, subscriber.phone ?? ""]
-          .join(" ")
-          .toLowerCase()
-          .includes(term);
-      return (
-        matchesTerm &&
-        (emailFilter === "all" || subscriber.email_status === emailFilter) &&
-        (!smsOnly || subscriber.sms_opt_in)
-      );
+        !term || [subscriber.name, subscriber.email].join(" ").toLowerCase().includes(term);
+      return matchesTerm && (emailFilter === "all" || subscriber.email_status === emailFilter);
     });
-  }, [emailFilter, search, smsOnly, subscribers]);
+  }, [emailFilter, search, subscribers]);
 
   return (
     <div className="admin-card mt-5 overflow-x-auto p-0">
@@ -123,7 +92,7 @@ export default function SubscriberManager({
         <input
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search name, email, or phone"
+          placeholder="Search name or email"
           className="field sm:max-w-sm"
           aria-label="Search subscribers"
         />
@@ -138,15 +107,6 @@ export default function SubscriberManager({
           <option value="pending">Pending</option>
           <option value="unsubscribed">Unsubscribed</option>
         </select>
-        <label className="flex items-center gap-2 text-sm text-[#59645e]">
-          <input
-            type="checkbox"
-            checked={smsOnly}
-            onChange={(event) => setSmsOnly(event.target.checked)}
-            className="accent-[#173b35]"
-          />
-          SMS opted in
-        </label>
       </div>
       <table className="admin-table">
         <thead>
@@ -155,7 +115,6 @@ export default function SubscriberManager({
             <th>Email</th>
             <th>Email status</th>
             <th>Email</th>
-            <th>Phone / SMS</th>
             <th>Joined</th>
             <th>Manage</th>
           </tr>
@@ -163,21 +122,18 @@ export default function SubscriberManager({
         <tbody>
           {filteredSubscribers.map((subscriber) => (
             <SubscriberRow
-              key={`${subscriber.id}:${subscriber.email_status}:${subscriber.sms_opt_in}:${subscriber.phone}`}
+              key={`${subscriber.id}:${subscriber.email_status}`}
               subscriber={subscriber}
               readOnly={readOnly}
             />
           ))}
           {!filteredSubscribers.length && (
             <tr>
-              <td colSpan={7}>No subscribers match these filters.</td>
+              <td colSpan={6}>No subscribers match these filters.</td>
             </tr>
           )}
         </tbody>
       </table>
-      <p className="px-4 py-3 text-xs text-[#8c958f]">
-        SMS preferences are stored separately. Text delivery is not configured.
-      </p>
     </div>
   );
 }

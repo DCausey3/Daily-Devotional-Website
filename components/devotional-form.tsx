@@ -112,7 +112,7 @@ export default function DevotionalForm({ readOnly = false }: { readOnly?: boolea
         <p className="text-sm text-[#77827c]">
           {readOnly
             ? "Connect Supabase to enable publishing and save devotionals."
-            : "Publishing makes this devotional visible on the public site. Email is sent separately; text delivery is not configured."}
+            : "Publishing makes this devotional visible on the public site. Email is sent separately; SMS is currently disabled."}
         </p>
         <div className="flex flex-wrap gap-3">
           <button

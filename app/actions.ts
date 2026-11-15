@@ -10,7 +10,13 @@ import { createClient } from "@/utils/supabase/server";
 import { createServiceClient } from "@/utils/supabase/service";
 import type { FormState } from "@/lib/form-state";
 import { isLocalPreview } from "@/lib/local-preview";
-import { createConfirmationToken, hashConfirmationToken } from "@/lib/subscriber-confirmation";
+import {
+  createConfirmationToken,
+  createSecureToken,
+  hashConfirmationToken,
+} from "@/lib/subscriber-confirmation";
+import { getSiteUrl } from "@/lib/site-url";
+import { unsubscribeSubscriber } from "@/lib/subscriber-preferences";
 
 function value(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -77,9 +83,7 @@ async function sendConfirmationEmail(email: string, name: string, token: string,
 export async function subscribe(_previous: FormState, formData: FormData): Promise<FormState> {
   const name = value(formData, "name");
   const email = value(formData, "email").toLowerCase();
-  const phone = value(formData, "phone");
   const emailOptIn = formData.get("email_opt_in") === "on";
-  const smsOptIn = formData.get("sms_opt_in") === "on";
 
   if (
     !name ||
@@ -89,11 +93,8 @@ export async function subscribe(_previous: FormState, formData: FormData): Promi
   ) {
     return { success: false, message: "Enter a valid name and email address." };
   }
-  if (!emailOptIn && !smsOptIn) {
-    return { success: false, message: "Choose email, text, or both to join the community." };
-  }
-  if ((phone && (phone.length < 7 || phone.length > 32)) || (smsOptIn && !phone)) {
-    return { success: false, message: "Enter a valid phone number to opt in to text messages." };
+  if (!emailOptIn) {
+    return { success: false, message: "Select email consent to join the devotional list." };
   }
   if (isLocalPreview()) {
     return {
@@ -107,6 +108,7 @@ export async function subscribe(_previous: FormState, formData: FormData): Promi
     return { success: false, message: "Could not create an email confirmation link. Try again." };
   }
 
+  const now = new Date().toISOString();
   const token = emailOptIn ? createConfirmationToken() : null;
   const supabase = createServiceClient();
   const { data: subscriber, error } = await supabase
@@ -114,15 +116,15 @@ export async function subscribe(_previous: FormState, formData: FormData): Promi
     .insert({
       name,
       email,
-      phone: phone || null,
       email_opt_in: emailOptIn,
       email_status: emailOptIn ? "pending" : "unsubscribed",
+      email_opt_in_at: emailOptIn ? now : null,
+      email_unsubscribed_at: null,
       email_confirmation_token_hash: token?.tokenHash ?? null,
       email_confirmation_expires_at: token
         ? new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString()
         : null,
       email_confirmation_error: null,
-      sms_opt_in: smsOptIn,
     })
     .select("id")
     .single();
@@ -157,9 +159,7 @@ export async function subscribe(_previous: FormState, formData: FormData): Promi
   revalidatePath("/admin");
   return {
     success: true,
-    message: emailOptIn
-      ? "Check your inbox and confirm your email to receive devotionals."
-      : "Your text preference was saved. Text delivery is not available yet.",
+    message: "Check your inbox and confirm your email to receive devotionals.",
   };
 }
 
@@ -199,6 +199,29 @@ export async function confirmEmail(_previous: FormState, formData: FormData): Pr
 
   revalidatePath("/admin");
   return { success: true, message: "Your email is confirmed. You can now receive devotionals." };
+}
+
+export async function unsubscribeFromChannel(
+  _previous: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const token = value(formData, "token");
+  const channel = value(formData, "channel");
+  if (!/^[A-Za-z0-9_-]{43}$/.test(token) || (channel !== "email" && channel !== "all")) {
+    return { success: false, message: "This preference link is invalid." };
+  }
+
+  const subscriber = await unsubscribeSubscriber(token, channel);
+  if (!subscriber) {
+    return { success: false, message: "This preference link is invalid." };
+  }
+
+  revalidatePath("/admin");
+  const message =
+    channel === "email"
+      ? "You are unsubscribed from devotional emails."
+      : "You are unsubscribed from all devotional messages.";
+  return { success: true, message };
 }
 
 export async function submitContact(_previous: FormState, formData: FormData): Promise<FormState> {
@@ -400,24 +423,19 @@ export async function saveSubscriberPreferences(
   const supabase = await requireAdmin();
   const subscriberId = value(formData, "subscriber_id");
   const name = value(formData, "name");
-  const phone = value(formData, "phone");
   const emailOptIn = formData.get("email_opt_in") === "on";
-  const smsOptIn = formData.get("sms_opt_in") === "on";
   if (!subscriberId || !name || name.length > 100) {
     return { success: false, message: "Enter a valid name." };
   }
-  if ((phone && (phone.length < 7 || phone.length > 32)) || (smsOptIn && !phone)) {
-    return { success: false, message: "A valid phone number is required for text consent." };
-  }
-
   const { data: subscriber, error: subscriberError } = await supabase
     .from("subscribers")
-    .select("id, email, email_status, email_confirmed_at")
+    .select(
+      "id, email, email_opt_in, email_opt_in_at, email_unsubscribed_at, email_status, email_confirmed_at",
+    )
     .eq("id", subscriberId)
     .single();
   if (subscriberError)
     throw new Error(`Could not load subscriber preferences: ${subscriberError.message}`);
-
   let emailStatus: "pending" | "confirmed" | "unsubscribed";
   let emailConfirmedAt: string | null;
   let token: ReturnType<typeof createConfirmationToken> | null = null;
@@ -435,18 +453,27 @@ export async function saveSubscriberPreferences(
     tokenExpiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
   }
 
+  const now = new Date().toISOString();
   const { error: updateError } = await supabase
     .from("subscribers")
     .update({
       name,
-      phone: phone || null,
       email_opt_in: emailOptIn,
       email_status: emailStatus,
       email_confirmed_at: emailConfirmedAt,
+      email_opt_in_at: emailOptIn
+        ? subscriber.email_opt_in
+          ? subscriber.email_opt_in_at
+          : now
+        : subscriber.email_opt_in_at,
+      email_unsubscribed_at: emailOptIn
+        ? null
+        : subscriber.email_opt_in
+          ? now
+          : subscriber.email_unsubscribed_at,
       email_confirmation_token_hash: token?.tokenHash ?? null,
       email_confirmation_expires_at: tokenExpiresAt,
       email_confirmation_error: null,
-      sms_opt_in: smsOptIn,
     })
     .eq("id", subscriberId);
   if (updateError) throw new Error(`Could not save subscriber preferences: ${updateError.message}`);
@@ -486,8 +513,11 @@ export async function sendDevotional(_previous: FormState, formData: FormData): 
   const supabase = await requireAdmin();
   const resendApiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
-  if (!resendApiKey || !from) {
-    throw new Error("Email delivery is not configured. Set RESEND_API_KEY and RESEND_FROM_EMAIL.");
+  const mailingAddress = process.env.MAILING_ADDRESS?.trim();
+  if (!resendApiKey || !from || !mailingAddress) {
+    throw new Error(
+      "Email delivery is not fully configured. Set RESEND_API_KEY, RESEND_FROM_EMAIL, and MAILING_ADDRESS.",
+    );
   }
 
   const devotionalId = value(formData, "devotional_id");
@@ -547,8 +577,8 @@ export async function sendDevotional(_previous: FormState, formData: FormData): 
     return { success: true, message: "No queued or failed email deliveries need sending." };
   }
 
+  const siteUrl = getSiteUrl();
   const resend = new Resend(resendApiKey);
-  const emailContent = buildDevotionalEmail(devotional);
 
   let accepted = 0;
   let failed = 0;
@@ -574,13 +604,59 @@ export async function sendDevotional(_previous: FormState, formData: FormData): 
         if (claimError) throw new Error(`Could not claim an email delivery: ${claimError.message}`);
         if (!claimed) return;
 
+        if (!delivery.subscriber_id) {
+          const errorMessage = "The delivery is not linked to a subscriber.";
+          const { error: updateError } = await supabase
+            .from("devotional_email_deliveries")
+            .update({
+              status: "failed",
+              error_message: errorMessage,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", delivery.id)
+            .eq("status", "sending");
+          if (updateError)
+            throw new Error(`Could not save an email delivery result: ${updateError.message}`);
+          failed += 1;
+          return;
+        }
+
+        const preferenceToken = createSecureToken();
+        const { error: tokenError } = await supabase.from("subscriber_preference_tokens").insert({
+          token_hash: preferenceToken.tokenHash,
+          subscriber_id: delivery.subscriber_id,
+        });
+        if (tokenError) {
+          const { error: updateError } = await supabase
+            .from("devotional_email_deliveries")
+            .update({
+              status: "failed",
+              error_message: `Could not create an unsubscribe link: ${tokenError.message}`,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", delivery.id)
+            .eq("status", "sending");
+          if (updateError)
+            throw new Error(`Could not save an email delivery result: ${updateError.message}`);
+          failed += 1;
+          return;
+        }
+        const preferencesUrl = new URL("/unsubscribe", siteUrl);
+        preferencesUrl.searchParams.set("token", preferenceToken.token);
+        const oneClickUrl = new URL("/api/unsubscribe", siteUrl);
+        oneClickUrl.searchParams.set("token", preferenceToken.token);
+
         let messageId: string | null = null;
         let errorMessage: string | null = null;
         try {
           const result = await resend.emails.send({
             from,
             to: delivery.recipient_email,
-            ...emailContent,
+            ...buildDevotionalEmail(devotional, preferencesUrl.toString(), mailingAddress),
+            headers: {
+              "List-Unsubscribe": `<${oneClickUrl.toString()}>`,
+              "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            },
             tags: [
               { name: "app", value: "daily_devotional" },
               { name: "delivery_id", value: delivery.id },

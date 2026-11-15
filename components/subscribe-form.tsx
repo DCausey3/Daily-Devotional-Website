@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { Check } from "lucide-react";
+import Link from "next/link";
 import { subscribe } from "@/app/actions";
 import type { FormState } from "@/lib/form-state";
 
@@ -37,25 +38,25 @@ export default function SubscribeForm() {
           className="field"
         />
       </div>
-      <label className="sr-only" htmlFor="subscriber-phone">
-        Phone number (optional)
-      </label>
-      <input
-        id="subscriber-phone"
-        name="phone"
-        type="tel"
-        maxLength={32}
-        placeholder="Phone number (optional)"
-        className="field"
-      />
       <label className="flex items-start gap-2 text-sm leading-5 text-[#59645e]">
-        <input name="email_opt_in" type="checkbox" className="mt-1 accent-[#173b35]" />
-        I agree to receive devotional emails. Please confirm by email. You can unsubscribe any time.
+        <input name="email_opt_in" type="checkbox" required className="mt-1 accent-[#173b35]" />
+        <span>
+          I agree to receive recurring devotional emails from Pastor K’s Daily Devotional. Frequency
+          varies. Please confirm by email. Unsubscribe at any time using the link in each email.
+          Consent is optional.
+        </span>
       </label>
-      <label className="flex items-start gap-2 text-sm leading-5 text-[#59645e]">
-        <input name="sms_opt_in" type="checkbox" className="mt-1 accent-[#173b35]" />
-        I agree to receive devotional text messages. Message and data rates may apply.
-      </label>
+      <p className="text-xs leading-5 text-[#77827c]">
+        Read our{" "}
+        <Link href="/terms" className="underline">
+          Email Terms
+        </Link>{" "}
+        and{" "}
+        <Link href="/privacy" className="underline">
+          Email Privacy Notice
+        </Link>
+        . You can unsubscribe from any email at any time.
+      </p>
       <button className="btn-gold w-full sm:w-auto" disabled={pending}>
         {pending ? "Saving preferences..." : "Join the Community"}
       </button>
